@@ -14,17 +14,6 @@ namespace StartingAmmo
     /// </summary>
     public class Plugin : Plugin<Config>
     {
-        private static readonly Plugin InstanceValue = new Plugin();
-
-        private Plugin()
-        {
-        }
-
-        /// <summary>
-        /// Gets the only existing instance of the <see cref="Plugin"/> class.
-        /// </summary>
-        public static Plugin Instance { get; } = InstanceValue;
-
         /// <summary>
         /// Gets an instance of the <see cref="StartingAmmo.EventHandlers"/> class.
         /// </summary>

@@ -27,20 +27,16 @@ namespace StartingAmmo
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out var ammoSet))
-            {
+            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out Dictionary<ItemType, ushort> ammoSet))
                 Timing.RunCoroutine(RunSetAmmo(ev, ammoSet));
-            }
         }
 
-        private IEnumerator<float> RunSetAmmo(ChangingRoleEventArgs ev, AmmoSet ammoSet)
+        private IEnumerator<float> RunSetAmmo(ChangingRoleEventArgs ev, Dictionary<ItemType, ushort> ammoSet)
         {
             yield return Timing.WaitUntilTrue(() => ev.Player.Role == ev.NewRole);
-            ev.Player.Ammo[ItemType.Ammo556x45] = ammoSet.Nato556;
-            ev.Player.Ammo[ItemType.Ammo762x39] = ammoSet.Nato762;
-            ev.Player.Ammo[ItemType.Ammo9x19] = ammoSet.Nato9;
-            ev.Player.Ammo[ItemType.Ammo12gauge] = ammoSet.Ammo12Gauge;
-            ev.Player.Ammo[ItemType.Ammo44cal] = ammoSet.Ammo44Cal;
+            yield return Timing.WaitForSeconds(1f);
+            foreach (var kvp in ammoSet)
+                ev.Player.Ammo[kvp.Key] = kvp.Value;
         }
     }
 }

@@ -19,9 +19,16 @@ namespace StartingAmmo
         /// <summary>
         /// Gets or sets a collection of roles to their starting ammo.
         /// </summary>
-        public Dictionary<RoleType, AmmoSet> Ammo { get; set; } = new Dictionary<RoleType, AmmoSet>
+        public Dictionary<RoleType, Dictionary<ItemType, ushort>> Ammo { get; set; } = new Dictionary<RoleType, Dictionary<ItemType, ushort>>()
         {
-            [RoleType.FacilityGuard] = new AmmoSet(),
+            [RoleType.FacilityGuard] = new Dictionary<ItemType, ushort>
+            {
+                [ItemType.Ammo9x19] = 9999,
+                [ItemType.Ammo12gauge] = 9999,
+                [ItemType.Ammo44cal] = 9999,
+                [ItemType.Ammo556x45] = 9999,
+                [ItemType.Ammo762x39] = 9999,
+            },
         };
     }
 }
