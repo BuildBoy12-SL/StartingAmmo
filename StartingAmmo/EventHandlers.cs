@@ -37,6 +37,8 @@ namespace StartingAmmo
             yield return Timing.WaitForSeconds(1f);
             foreach (var kvp in ammoSet)
                 ev.Player.Ammo[kvp.Key] = kvp.Value;
+
+            ev.Player.ReferenceHub.inventory.ServerSendAmmo();
         }
     }
 }
