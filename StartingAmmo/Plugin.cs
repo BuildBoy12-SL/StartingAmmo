@@ -14,24 +14,21 @@ namespace StartingAmmo
     /// </summary>
     public class Plugin : Plugin<Config>
     {
-        /// <summary>
-        /// Gets an instance of the <see cref="StartingAmmo.EventHandlers"/> class.
-        /// </summary>
-        public EventHandlers EventHandlers { get; private set; }
+        private EventHandlers eventHandlers;
 
         /// <inheritdoc />
         public override void OnEnabled()
         {
-            EventHandlers = new EventHandlers(this);
-            Exiled.Events.Handlers.Player.ChangingRole += EventHandlers.OnChangingRole;
+            eventHandlers = new EventHandlers(this);
+            Exiled.Events.Handlers.Player.ChangingRole += eventHandlers.OnChangingRole;
             base.OnEnabled();
         }
 
         /// <inheritdoc />
         public override void OnDisabled()
         {
-            Exiled.Events.Handlers.Player.ChangingRole -= EventHandlers.OnChangingRole;
-            EventHandlers = null;
+            Exiled.Events.Handlers.Player.ChangingRole -= eventHandlers.OnChangingRole;
+            eventHandlers = null;
             base.OnDisabled();
         }
     }

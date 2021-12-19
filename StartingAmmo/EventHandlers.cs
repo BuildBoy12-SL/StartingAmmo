@@ -8,8 +8,9 @@
 namespace StartingAmmo
 {
     using System.Collections.Generic;
+    using Exiled.API.Enums;
+    using Exiled.API.Extensions;
     using Exiled.Events.EventArgs;
-    using MEC;
 
     /// <summary>
     /// Handles events from <see cref="Exiled.Events.Handlers"/>.
@@ -27,18 +28,12 @@ namespace StartingAmmo
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out Dictionary<ItemType, ushort> ammoSet))
-                Timing.RunCoroutine(RunSetAmmo(ev, ammoSet));
-        }
-
-        private IEnumerator<float> RunSetAmmo(ChangingRoleEventArgs ev, Dictionary<ItemType, ushort> ammoSet)
-        {
-            yield return Timing.WaitUntilTrue(() => ev.Player.Role == ev.NewRole);
-            yield return Timing.WaitForSeconds(1f);
-            foreach (var kvp in ammoSet)
-                ev.Player.Ammo[kvp.Key] = kvp.Value;
-
-            ev.Player.ReferenceHub.inventory.ServerSendAmmo();
+            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out Dictionary<AmmoType, ushort> ammoSet))
+            {
+                ev.Ammo.Clear();
+                foreach (KeyValuePair<AmmoType, ushort> kvp in ammoSet)
+                    ev.Ammo.Add(kvp.Key.GetItemType(), kvp.Value);
+            }
         }
     }
 }
