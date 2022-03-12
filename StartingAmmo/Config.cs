@@ -8,7 +8,6 @@
 namespace StartingAmmo
 {
     using System.Collections.Generic;
-    using Exiled.API.Enums;
     using Exiled.API.Interfaces;
 
     /// <inheritdoc />
