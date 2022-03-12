@@ -8,8 +8,6 @@
 namespace StartingAmmo
 {
     using System.Collections.Generic;
-    using Exiled.API.Enums;
-    using Exiled.API.Extensions;
     using Exiled.Events.EventArgs;
 
     /// <summary>
@@ -28,11 +26,11 @@ namespace StartingAmmo
         /// <inheritdoc cref="Exiled.Events.Handlers.Player.OnChangingRole(ChangingRoleEventArgs)"/>
         public void OnChangingRole(ChangingRoleEventArgs ev)
         {
-            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out Dictionary<AmmoType, ushort> ammoSet))
+            if (plugin.Config.Ammo.TryGetValue(ev.NewRole, out Dictionary<ItemType, ushort> ammoSet))
             {
                 ev.Ammo.Clear();
-                foreach (KeyValuePair<AmmoType, ushort> kvp in ammoSet)
-                    ev.Ammo.Add(kvp.Key.GetItemType(), kvp.Value);
+                foreach (KeyValuePair<ItemType, ushort> kvp in ammoSet)
+                    ev.Ammo.Add(kvp.Key, kvp.Value);
             }
         }
     }
