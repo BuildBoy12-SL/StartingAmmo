@@ -40,12 +40,14 @@ namespace StartingAmmo.Patches
             const int ammoLimitIndex = 9;
 
             // if (Plugin.Instance.Config.Ammo.TryGetValue(inv._hub.characterClassManager.CurClass, out Dictionary<ItemType, ushort> startingAmmo) &&
-            //     startingAmmo.TryGetValue(keyValuePair.Key, out ushort startingAmount))
+            //     startingAmmo.TryGetValue(keyValuePair.Key, out ushort startingAmount) &&
+            //     startingAmount > ammoLimit)
             // {
             //    ammoLimit = startingAmount;
             // }
             newInstructions.InsertRange(index, new[]
             {
+                // if (!Plugin.Instance.Config.Ammo.TryGetValue(inv._hub.characterClassManager.CurClass, out Dictionary<ItemType, ushort> startingAmmo) goto skipOverwrite;
                 new CodeInstruction(OpCodes.Call, PropertyGetter(typeof(Plugin), nameof(Plugin.Instance))),
                 new CodeInstruction(OpCodes.Callvirt, PropertyGetter(typeof(Plugin), nameof(Plugin.Config))),
                 new CodeInstruction(OpCodes.Callvirt, PropertyGetter(typeof(Config), nameof(Config.Ammo))),
@@ -56,12 +58,21 @@ namespace StartingAmmo.Patches
                 new CodeInstruction(OpCodes.Ldloca_S, startingAmmo.LocalIndex),
                 new CodeInstruction(OpCodes.Callvirt, Method(typeof(Dictionary<RoleType, Dictionary<ItemType, ushort>>), nameof(Dictionary<RoleType, Dictionary<ItemType, ushort>>.TryGetValue))),
                 new CodeInstruction(OpCodes.Brfalse_S, skipOverwriteLabel),
+
+                // if (!startingAmmo.TryGetValue(keyValuePair.Key, out ushort startingAmount)) goto skipOverwrite;
                 new CodeInstruction(OpCodes.Ldloc_S, startingAmmo.LocalIndex),
                 new CodeInstruction(OpCodes.Ldloca_S, kvpIndex),
                 new CodeInstruction(OpCodes.Call, PropertyGetter(typeof(KeyValuePair<ItemType, ushort>), nameof(KeyValuePair<ItemType, ushort>.Key))),
                 new CodeInstruction(OpCodes.Ldloca_S, startingAmount.LocalIndex),
                 new CodeInstruction(OpCodes.Callvirt, Method(typeof(Dictionary<ItemType, ushort>), nameof(Dictionary<ItemType, ushort>.TryGetValue))),
                 new CodeInstruction(OpCodes.Brfalse_S, skipOverwriteLabel),
+
+                // if (startingAmount <= ammoLimit) goto skipOverwrite;
+                new CodeInstruction(OpCodes.Ldloc_S, startingAmount.LocalIndex),
+                new CodeInstruction(OpCodes.Ldloc_S, ammoLimitIndex),
+                new CodeInstruction(OpCodes.Ble_S, skipOverwriteLabel),
+
+                // ammoLimit = startingAmount;
                 new CodeInstruction(OpCodes.Ldloc_S, startingAmount.LocalIndex),
                 new CodeInstruction(OpCodes.Stloc_S, ammoLimitIndex),
             });
